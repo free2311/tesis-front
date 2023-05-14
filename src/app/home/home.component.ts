@@ -14,7 +14,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     const id = this.rutaActiva.snapshot.queryParamMap.get('id');
     console.log(id);
     this.getDatos(id)
@@ -56,18 +55,19 @@ export class HomeComponent implements OnInit {
         console.log(res);
         let name = res.data[0].Nombre;
         Swal.fire({
-          title: `Hola ${name} bienvenido,Su licencia vencera pronto si quiere hacer nuevamente uso de nuestros servicio seleccione el boton Renovar esperamos que siga contando con nuestros servicios `,
+          title: `Hola ${name} bienvenido, Su licencia vencera pronto si quiere hacer nuevamente uso de nuestros servicio seleccione el boton Renovar esperamos que siga contando con nuestros servicios `,
           showDenyButton: true,
           showCancelButton: false,
           confirmButtonText: 'Renovar',
           confirmButtonColor: "blue",
           denyButtonText: `No renovar`,
         }).then((result) => {
-          if (result.isConfirmed) {
 
+          if (result.isConfirmed) {
             this.callEndpoint(id);
           } else if (result.isDenied) {
-            Swal.fire('Changes are not saved', '', 'info')
+            //Swal.fire('Changes are not saved', '', 'info')
+            window.location.href = "https://www.gmail.com/";
           }
         })
 
