@@ -24,19 +24,26 @@ export class HomeComponent implements OnInit {
     this.apiService.post(`renovar/${id}`).subscribe(
       async (res: any) => {
         console.log(res);
-        Swal.fire({
-          title: 'Renovacion Realizada',
-          confirmButtonText: 'Cerrar',
+        if (res) {
+          Swal.fire({
+            title: 'Renovacion Realizada',
+            confirmButtonText: 'Cerrar',
 
-        }).then((result) => {
-          if (result.isConfirmed) {
-            //cerrar ventana
-          }
-        })
+          }).then((result) => {
+            if (result.isConfirmed) {
+              //cerrar ventana
+              window.close();
+            }
+          })
+
+        } else {
+          this.toastFireError(res);
+        }
+
       },
       (error: any) => {
         console.log('error aceptando terminos', error);
-
+        this.toastFireError(error);
       }
     );
 
@@ -53,34 +60,54 @@ export class HomeComponent implements OnInit {
     await this.apiService.post('getdatos', body).subscribe(
       async (res: any) => {
         console.log(res);
-        let name = res.data[0].Nombre;
-        Swal.fire({
-          title: `Hola ${name} bienvenido, Su licencia vencera pronto si quiere hacer nuevamente uso de nuestros servicio seleccione el boton Renovar esperamos que siga contando con nuestros servicios `,
-          showDenyButton: true,
-          showCancelButton: false,
-          confirmButtonText: 'Renovar',
-          confirmButtonColor: "blue",
-          denyButtonText: `No renovar`,
-        }).then((result) => {
+        if (res) {
 
-          if (result.isConfirmed) {
-            this.callEndpoint(id);
-          } else if (result.isDenied) {
-            //Swal.fire('Changes are not saved', '', 'info')
-            window.location.href = "https://www.gmail.com/";
-          }
-        })
+          let name = res.data[0].Nombre;
+          Swal.fire({
+            title: `Hola ${name} bienvenido, Su licencia vencera pronto si quiere hacer nuevamente uso de nuestros servicio seleccione el boton Renovar esperamos que siga contando con nuestros servicios `,
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'Renovar',
+            confirmButtonColor: "blue",
+            denyButtonText: `No renovar`,
+          }).then((result) => {
+
+            if (result.isConfirmed) {
+              this.callEndpoint(id);
+            } else if (result.isDenied) {
+              window.location.href = "https://www.gmail.com/";
+            }
+          })
+
+        } else {
+          this.toastFireError(res);
+        }
+
+
+
 
       },
       (error: any) => {
         console.log('error consultando el info', error);
-
+        this.toastFireError(error);
       }
     );
 
 
 
   }
+
+  toastFireError(res: any) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: res?.error?.message ? res?.error?.message : "Error Consultando informacion",
+    }).then(() => {
+      //if (redirect)
+      //   window.location.href = window.location.href = "/home/dashboard";
+    });
+  }
+
 
 }
 
